@@ -20,6 +20,10 @@
     img { max-width: 100%; display: block; }
 
     /* ── MOBILE OVERRIDES (CSS-based, always reliable) ── */
+    /* Drawer open state — class toggled by JS, more reliable than inline style on mobile */
+    .jb-drawer { display: none; }
+    .jb-drawer.is-open { display: flex !important; }
+
     @media (max-width: 767px) {
       .jb-nav-links { display: none !important; }
       .jb-nav-hamburger { display: flex !important; }
@@ -47,12 +51,11 @@
       .jb-gear-grid { grid-template-columns: 1fr !important; }
       .jb-about-stats { flex-wrap: wrap; gap: 20px !important; }
       .jb-press-gap { gap: 16px !important; }
-      .jb-drawer { display: flex !important; }
     }
     @media (min-width: 768px) {
       .jb-nav-hamburger { display: none !important; }
       .jb-nav-links { display: flex !important; }
-      .jb-drawer { display: none !important; }
+      .jb-drawer, .jb-drawer.is-open { display: none !important; }
     }
   </style>
 </head>
@@ -159,7 +162,7 @@ const Nav = ({ t, page, setPage, wmark }) => {
       </nav>
 
       {/* Mobile drawer */}
-      <div className="jb-drawer" style={{ position:'fixed', top:64, left:0, right:0, bottom:0, zIndex:199, background:t.navBg, backdropFilter:'blur(14px)', flexDirection:'column', padding:'32px 24px', gap:0, overflowY:'auto', display: open ? 'flex' : 'none' }}>
+      <div className={`jb-drawer${open ? ' is-open' : ''}`} style={{ position:'fixed', top:64, left:0, right:0, bottom:0, zIndex:199, background:t.navBg, flexDirection:'column', padding:'32px 24px', gap:0, overflowY:'auto', WebkitOverflowScrolling:'touch' }}>
         {[...links, 'Book a Session'].map((l) => {
           const slug = l === 'Book a Session' ? 'book' : l.toLowerCase();
           const isBook = l === 'Book a Session';
@@ -760,13 +763,18 @@ const TweaksPanel = ({ tweaks, setTweak, navigateTo }) => {
 
 // ══════════════════════════ APP ═══════════════════════════════════════════════
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "theme": "Bright Minimal",
+  "theme": "Dark Cinematic",
   "wordmark": "serif"
 }/*EDITMODE-END*/;
 
 const App = () => {
   const [tweaks, setTweaksState] = React.useState(() => {
-    try { return { ...TWEAK_DEFAULTS, ...JSON.parse(localStorage.getItem('jb-tweaks') || '{}') }; }
+    try {
+      const saved = JSON.parse(localStorage.getItem('jb-tweaks') || '{}');
+      // If no theme saved yet, always use the file default (Dark Cinematic)
+      if (!saved.theme) return { ...TWEAK_DEFAULTS };
+      return { ...TWEAK_DEFAULTS, ...saved };
+    }
     catch { return { ...TWEAK_DEFAULTS }; }
   });
   const setTweak = (key, val) => setTweaksState(prev => {
