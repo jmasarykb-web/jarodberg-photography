@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jarod M. Berg Photography — San Luis Obispo, CA</title>
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow-x: hidden; }
+    button, input, textarea, select { font-family: inherit; }
+    input::placeholder, textarea::placeholder { opacity: 0.45; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ── THEMES ────────────────────────────────────────────────────────────────────
+const THEMES = {
+  'Bright Minimal': {
+    bg:'#fafaf8', bgAlt:'#f2f0ec', fg:'#111110', fgMuted:'#6e6e6a',
+    accent:'oklch(34% 0.09 255)', accentFg:'#ffffff',
+    border:'#e0ddd8', navBg:'rgba(250,250,248,0.93)',
+    heroOverlay:'rgba(10,10,8,0.35)',
+    hf:'"Cormorant Garamond",Georgia,serif', bf:'"DM Sans",system-ui,sans-serif',
+  },
+  'Dark Cinematic': {
+    bg:'#0d0c0b', bgAlt:'#181715', fg:'#eeebe4', fgMuted:'#888480',
+    accent:'oklch(72% 0.10 48)', accentFg:'#0d0c0b',
+    border:'#2c2a27', navBg:'rgba(13,12,11,0.93)',
+    heroOverlay:'rgba(0,0,0,0.55)',
+    hf:'"Cormorant Garamond",Georgia,serif', bf:'"DM Sans",system-ui,sans-serif',
+  },
+  'Warm Editorial': {
+    bg:'#f5efe6', bgAlt:'#ece5da', fg:'#24201a', fgMuted:'#7c7066',
+    accent:'oklch(40% 0.10 28)', accentFg:'#f5efe6',
+    border:'#d5cdc2', navBg:'rgba(245,239,230,0.93)',
+    heroOverlay:'rgba(20,14,8,0.40)',
+    hf:'"Cormorant Garamond",Georgia,serif', bf:'"DM Sans",system-ui,sans-serif',
+  },
+};
+
+// ── PLACEHOLDER ───────────────────────────────────────────────────────────────
+const Img = ({ label='photo', aspect='3/2', style={}, dark=false }) => {
+  const c1 = dark ? '#1e1e1c' : '#d8d4ce', c2 = dark ? '#252523' : '#e8e4de';
+  return (
+    <div style={{ aspectRatio:aspect, background:`repeating-linear-gradient(45deg,${c1} 0,${c1} 1px,${c2} 0,${c2} 50%)`, backgroundSize:'10px 10px', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'monospace', fontSize:10, letterSpacing:'0.06em', color:dark?'#555':'#aaa', textTransform:'uppercase', width:'100%', flexShrink:0, ...style }}>
+      {label}
+    </div>
+  );
+};
+
+// ── WORDMARK ──────────────────────────────────────────────────────────────────
+const Wordmark = ({ t, variant='stacked', onClick }) => {
+  if (variant === 'mono') return (
+    <div onClick={onClick} style={{ cursor:'pointer', display:'flex', alignItems:'center', gap:10, whiteSpace:'nowrap' }}>
+      <div style={{ width:34, height:34, border:`1.5px solid ${t.fg}`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:t.hf, fontSize:17, color:t.fg, flexShrink:0 }}>JB</div>
+      <div>
+        <div style={{ fontFamily:t.bf, fontSize:11, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fg, lineHeight:1 }}>JAROD M. BERG</div>
+        <div style={{ fontFamily:t.bf, fontSize:9, letterSpacing:'0.18em', textTransform:'uppercase', color:t.fgMuted, marginTop:3 }}>PHOTOGRAPHY</div>
+      </div>
+    </div>
+  );
+  if (variant === 'serif') return (
+    <div onClick={onClick} style={{ cursor:'pointer', whiteSpace:'nowrap' }}>
+      <div style={{ fontFamily:t.hf, fontSize:19, fontStyle:'italic', color:t.fg, lineHeight:1 }}>Jarod M. Berg</div>
+      <div style={{ fontFamily:t.bf, fontSize:9, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fgMuted, marginTop:3 }}>PHOTOGRAPHY</div>
+    </div>
+  );
+  return (
+    <div onClick={onClick} style={{ cursor:'pointer', whiteSpace:'nowrap' }}>
+      <div style={{ fontFamily:t.bf, fontWeight:600, fontSize:13, letterSpacing:'0.28em', textTransform:'uppercase', color:t.fg, lineHeight:1 }}>JAROD M. BERG</div>
+      <div style={{ fontFamily:t.bf, fontSize:8.5, letterSpacing:'0.24em', textTransform:'uppercase', color:t.fgMuted, marginTop:3 }}>PHOTOGRAPHY</div>
+    </div>
+  );
+};
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+const Nav = ({ t, page, setPage, wmark }) => {
+  const links = ['Portfolio','About','Services','Blog','Contact'];
+  return (
+    <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, background:t.navBg, backdropFilter:'blur(12px)', borderBottom:`1px solid ${t.border}`, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:64 }}>
+      <Wordmark t={t} variant={wmark} onClick={() => setPage('home')} />
+      <div style={{ display:'flex', alignItems:'center', gap:28 }}>
+        {links.map(l => (
+          <button key={l} onClick={() => setPage(l.toLowerCase())} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:page===l.toLowerCase()?t.accent:t.fgMuted, padding:0, transition:'color 0.2s' }}>{l}</button>
+        ))}
+        <button onClick={() => setPage('book')} style={{ background:t.accent, color:t.accentFg, border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', padding:'10px 20px' }}>Book a Session</button>
+      </div>
+    </nav>
+  );
+};
+
+// ── FOOTER ────────────────────────────────────────────────────────────────────
+const Footer = ({ t, setPage, wmark }) => (
+  <footer style={{ background:t.bgAlt, borderTop:`1px solid ${t.border}`, padding:'60px 80px 40px' }}>
+    <div style={{ display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:40, marginBottom:48 }}>
+      <div>
+        <Wordmark t={t} variant={wmark} />
+        <p style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted, marginTop:16, maxWidth:260, lineHeight:1.7 }}>Photographer · Lawyer · Advocate · Creative · Friend of Gaia. Based in San Luis Obispo, CA. Available throughout California and beyond.</p>
+        <p style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, marginTop:12 }}>hello@jarodberg.com</p>
+      </div>
+      <div style={{ display:'flex', gap:60, flexWrap:'wrap' }}>
+        {[{title:'Work', links:['Portfolio','Services','Client Galleries']},{title:'Info', links:['About','Blog','Contact']}].map(col => (
+          <div key={col.title}>
+            <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.2em', textTransform:'uppercase', color:t.fgMuted, marginBottom:14 }}>{col.title}</div>
+            {col.links.map(l => (
+              <div key={l} style={{ marginBottom:10 }}>
+                <button onClick={() => setPage(l.toLowerCase().replace(' ','-'))} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:13, color:t.fg, padding:0 }}>{l}</button>
+              </div>
+            ))}
+          </div>
+        ))}
+        <div>
+          <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.2em', textTransform:'uppercase', color:t.fgMuted, marginBottom:14 }}>Follow</div>
+          {['Instagram','Facebook','LinkedIn'].map(s => (
+            <div key={s} style={{ marginBottom:10 }}>
+              <a href="#" style={{ fontFamily:t.bf, fontSize:13, color:t.fg, textDecoration:'none' }}>{s}</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div style={{ borderTop:`1px solid ${t.border}`, paddingTop:24, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
+      <span style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted }}>© 2026 Jarod M. Berg Photography · San Luis Obispo, CA</span>
+      <button onClick={() => setPage('privacy')} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:11, color:t.fgMuted, padding:0 }}>Privacy Policy</button>
+    </div>
+  </footer>
+);
+
+// ── SHARED ────────────────────────────────────────────────────────────────────
+const SH = ({ label, title, t, center=false }) => (
+  <div style={{ textAlign:center?'center':'left', marginBottom:48 }}>
+    {label && <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fgMuted, marginBottom:12 }}>{label}</div>}
+    <h2 style={{ fontFamily:t.hf, fontSize:44, fontWeight:400, color:t.fg, margin:0, lineHeight:1.1 }}>{title}</h2>
+  </div>
+);
+
+const Btn = ({ t, onClick, children, outline=false, full=false, type='button' }) => (
+  <button type={type} onClick={onClick} style={{ background:outline?'none':t.accent, color:outline?t.fg:t.accentFg, border:outline?`1px solid ${t.border}`:'none', cursor:'pointer', fontFamily:t.bf, fontSize:11, letterSpacing:'0.16em', textTransform:'uppercase', padding:'13px 26px', width:full?'100%':'auto', transition:'opacity 0.2s' }}>
+    {children}
+  </button>
+);
+
+// ══════════════════════════ PAGES ═════════════════════════════════════════════
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+const HomePage = ({ t, setPage }) => {
+  const dark = t.bg === '#0d0c0b';
+  const specs = [
+    { slug:'wedding', label:'Wedding & Events', desc:'From Greengate Ranch to Holman Ranch, I cover Central Coast weddings with unhurried attention and a documentary eye.' },
+    { slug:'portrait', label:'Portrait & Headshot', desc:'Executive portraits, personal branding, and headshots that actually look like you — shot on location or in studio.' },
+    { slug:'commercial', label:'Commercial & Brand', desc:'Food and wine, hospitality, product, and lifestyle campaigns for Central Coast businesses and brands.' },
+    { slug:'landscape', label:'Fine Art & Landscape', desc:'Limited-edition prints of Big Sur, Morro Rock, the Carrizo Plain, and the vineyards of Paso Robles.' },
+  ];
+  return (
+    <div>
+      {/* Hero */}
+      <div style={{ position:'relative', height:'100vh', overflow:'hidden' }}>
+        <Img label="hero — Central Coast landscape or wedding editorial" aspect="auto" style={{ position:'absolute', inset:0, height:'100%', aspectRatio:'auto' }} dark={dark} />
+        <div style={{ position:'absolute', inset:0, background:t.heroOverlay }} />
+        <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'0 80px 80px' }}>
+          <div style={{ maxWidth:700 }}>
+            <div style={{ fontFamily:t.bf, fontSize:11, letterSpacing:'0.22em', textTransform:'uppercase', color:'rgba(255,255,255,0.7)', marginBottom:20 }}>San Luis Obispo, CA · California Central Coast</div>
+            <h1 style={{ fontFamily:t.hf, fontSize:76, fontWeight:400, fontStyle:'italic', color:'#fff', margin:'0 0 28px', lineHeight:1.03, textWrap:'pretty' }}>
+              Photographs that hold the weight of a moment.
+            </h1>
+            <div style={{ display:'flex', gap:14 }}>
+              <button onClick={() => setPage('portfolio')} style={{ background:'#fff', color:'#111', border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase', padding:'14px 28px' }}>View Work</button>
+              <button onClick={() => setPage('book')} style={{ background:'transparent', color:'#fff', border:'1px solid rgba(255,255,255,0.5)', cursor:'pointer', fontFamily:t.bf, fontSize:11, letterSpacing:'0.18em', textTransform:'uppercase', padding:'14px 28px' }}>Book a Session</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Specialties */}
+      <div style={{ padding:'100px 80px', background:t.bg }}>
+        <SH label="Work" title="Every frame a story." t={t} />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:2 }}>
+          {specs.map(s => (
+            <div key={s.slug} onClick={() => setPage('portfolio')} style={{ cursor:'pointer' }}>
+              <Img label={`${s.slug} — Central Coast`} aspect="3/4" dark={dark} />
+              <div style={{ paddingTop:18 }}>
+                <div style={{ fontFamily:t.hf, fontSize:22, fontStyle:'italic', color:t.fg, marginBottom:8 }}>{s.label}</div>
+                <div style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, lineHeight:1.7 }}>{s.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* About teaser */}
+      <div style={{ background:t.bgAlt, padding:'100px 80px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center' }}>
+        <Img label="portrait of jarod berg — SLO" aspect="4/5" dark={dark} />
+        <div>
+          <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fgMuted, marginBottom:16 }}>About</div>
+          <h2 style={{ fontFamily:t.hf, fontSize:46, fontStyle:'italic', fontWeight:400, color:t.fg, margin:'0 0 22px', lineHeight:1.1 }}>Raised on the Central Coast. Obsessed with its light.</h2>
+          <p style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.85, marginBottom:32 }}>I grew up along the California Central Coast and never left — not because I had to stay, but because the light here does something I have not found anywhere else. From the fog lifting off Morro Bay at dawn to the last gold hour over the Paso vineyards, I have built my practice around the place I know best.</p>
+          <Btn t={t} onClick={() => setPage('about')} outline>More About Me</Btn>
+        </div>
+      </div>
+
+      {/* Press / as-seen strip */}
+      <div style={{ background:t.bg, padding:'60px 80px', borderTop:`1px solid ${t.border}`, borderBottom:`1px solid ${t.border}` }}>
+        <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.2em', textTransform:'uppercase', color:t.fgMuted, textAlign:'center', marginBottom:28 }}>As featured in</div>
+        <div style={{ display:'flex', gap:56, justifyContent:'center', alignItems:'center', flexWrap:'wrap' }}>
+          {['New Times SLO','805 Living','The Tribune','California Wedding Day','Rangefinder Magazine'].map(p => (
+            <span key={p} style={{ fontFamily:t.hf, fontSize:18, fontStyle:'italic', color:t.fgMuted, letterSpacing:'0.02em' }}>{p}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ background:t.bg, padding:'100px 80px', textAlign:'center' }}>
+        <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fgMuted, marginBottom:20 }}>Book for 2026 — limited dates remain</div>
+        <h2 style={{ fontFamily:t.hf, fontSize:56, fontStyle:'italic', fontWeight:400, color:t.fg, margin:'0 0 36px', lineHeight:1.1 }}>Your next great photograph<br />starts with a conversation.</h2>
+        <div style={{ display:'flex', gap:14, justifyContent:'center' }}>
+          <Btn t={t} onClick={() => setPage('book')}>Book a Free Consult</Btn>
+          <Btn t={t} onClick={() => setPage('contact')} outline>Send a Message</Btn>
+        </div>
+        <div style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, marginTop:18 }}>Free · 15 minutes · No commitment</div>
+      </div>
+    </div>
+  );
+};
+
+// ── PORTFOLIO ─────────────────────────────────────────────────────────────────
+const PortfolioPage = ({ t }) => {
+  const dark = t.bg === '#0d0c0b';
+  const cats = ['All','Wedding','Portrait','Landscape','Street','Commercial','Sports'];
+  const [active, setActive] = React.useState('All');
+  const photos = [
+    {cat:'Wedding',a:'3/2',l:'greengate ranch ceremony'},{cat:'Portrait',a:'2/3',l:'executive headshot — SLO'},{cat:'Landscape',a:'16/9',l:'morro rock at dawn'},
+    {cat:'Wedding',a:'2/3',l:'holman ranch reception'},{cat:'Commercial',a:'3/2',l:'tablas creek vineyard'},{cat:'Street',a:'2/3',l:'downtown SLO'},
+    {cat:'Portrait',a:'3/2',l:'personal branding session'},{cat:'Sports',a:'3/2',l:'triathlon — avila beach'},{cat:'Landscape',a:'2/3',l:'big sur coastline'},
+    {cat:'Wedding',a:'3/2',l:'sunstone winery — Santa Ynez'},{cat:'Street',a:'2/3',l:'SLO farmers market'},{cat:'Commercial',a:'3/4',l:'edna valley winery'},
+    {cat:'Portrait',a:'2/3',l:'musician portrait — SLO'},{cat:'Sports',a:'3/2',l:'cycling — los osos valley rd'},{cat:'Landscape',a:'16/9',l:'carrizo plain superbloom'},
+    {cat:'Wedding',a:'3/4',l:'first look — see canyon'},{cat:'Street',a:'3/2',l:'mission plaza golden hour'},{cat:'Commercial',a:'2/3',l:'product — central coast olive oil'},
+  ];
+  const visible = active === 'All' ? photos : photos.filter(p => p.cat === active);
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'60px 80px 80px' }}>
+        <SH label="Selected Work" title="Portfolio" t={t} />
+        <div style={{ display:'flex', gap:8, marginBottom:40, flexWrap:'wrap' }}>
+          {cats.map(c => (
+            <button key={c} onClick={() => setActive(c)} style={{ background:active===c?t.fg:'none', color:active===c?t.bg:t.fgMuted, border:`1px solid ${active===c?t.fg:t.border}`, cursor:'pointer', fontFamily:t.bf, fontSize:10, letterSpacing:'0.14em', textTransform:'uppercase', padding:'8px 18px', transition:'all 0.18s' }}>{c}</button>
+          ))}
+        </div>
+        <div style={{ columns:'3 300px', gap:4 }}>
+          {visible.map((p,i) => (
+            <div key={`${active}-${i}`} style={{ breakInside:'avoid', marginBottom:4 }}>
+              <Img label={p.l} aspect={p.a} dark={dark} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── ABOUT ─────────────────────────────────────────────────────────────────────
+const AboutPage = ({ t, setPage }) => {
+  const dark = t.bg === '#0d0c0b';
+  const paras = [
+    "I am a photographer based in San Luis Obispo, California. My practice spans weddings, editorial portraits, commercial assignments for Central Coast food and wine brands, and personal fine art landscape work. I have been shooting professionally for over a decade.",
+    "I grew up on the Central Coast and have watched the light here my entire life — the marine layer that softens a June morning at Morro Bay, the hard afternoon shadows in downtown SLO, the way the last hour of sun turns the vineyards above Paso Robles into something close to gold. That familiarity is what I bring to every shoot: I know exactly where to be and when.",
+    "My approach is documentary at its core. Whether I am covering a wedding at Greengate Ranch or a commercial campaign for a local winery, I try to photograph the thing that is actually happening rather than the version of it that was planned. The best frame is usually the one nobody saw coming.",
+    "I shoot on both Sony digital and Hasselblad medium format film, depending on what the work calls for. Fine art landscape prints and much of my personal portrait work are shot on film. Commercial and fast-turnaround work is digital.",
+    "I believe in a calm, unhurried presence on the day. My clients regularly tell me they forgot I was there — which, for a photographer, is about the highest compliment there is.",
+  ];
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px', maxWidth:1200, margin:'0 auto' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'5fr 4fr', gap:80, alignItems:'start' }}>
+          <div>
+            <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.22em', textTransform:'uppercase', color:t.fgMuted, marginBottom:20 }}>About</div>
+            <h1 style={{ fontFamily:t.hf, fontSize:60, fontStyle:'italic', fontWeight:400, color:t.fg, margin:'0 0 16px', lineHeight:1.05 }}>Jarod M. Berg</h1>
+            <div style={{ fontFamily:t.bf, fontSize:12, letterSpacing:'0.10em', color:t.fgMuted, marginBottom:36, lineHeight:1.8 }}>Photographer &nbsp;·&nbsp; Lawyer &nbsp;·&nbsp; Advocate &nbsp;·&nbsp; Creative &nbsp;·&nbsp; Friend of Gaia</div>
+            {paras.map((p,i) => (
+              <p key={i} style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.9, marginBottom:24 }}>{p}</p>
+            ))}
+            <div style={{ display:'flex', gap:48, marginTop:52, paddingTop:48, borderTop:`1px solid ${t.border}`, flexWrap:'wrap' }}>
+              {[['10+','Years professional'],['300+','Weddings covered'],['California','Home base'],['Worldwide','Available']].map(([n,l]) => (
+                <div key={l}>
+                  <div style={{ fontFamily:t.hf, fontSize:36, fontWeight:400, color:t.fg }}>{n}</div>
+                  <div style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, letterSpacing:'0.08em', marginTop:4 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display:'flex', gap:12, marginTop:40, flexWrap:'wrap' }}>
+              <Btn t={t} onClick={() => setPage('book')}>Book a Free Consult</Btn>
+              <Btn t={t} onClick={() => setPage('portfolio')} outline>View Portfolio</Btn>
+            </div>
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:4, position:'sticky', top:80 }}>
+            <Img label="portrait — jarod berg, SLO" aspect="4/5" dark={dark} />
+            <Img label="at work — wedding coverage" aspect="16/9" dark={dark} />
+          </div>
+        </div>
+
+        {/* Gear */}
+        <div style={{ marginTop:100, paddingTop:60, borderTop:`1px solid ${t.border}` }}>
+          <SH label="Equipment" title="What I shoot with." t={t} />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:2 }}>
+            {[
+              { cat:'Digital', items:['Sony A7R V (primary)','Sony A7 IV (backup/video)','Sony 24-70mm f/2.8 GM II','Sony 85mm f/1.4 GM','Sony 135mm f/1.8 GM','Sony 16-35mm f/2.8 GM'] },
+              { cat:'Film', items:['Hasselblad 500CM','Kodak Portra 400 & 800','Ilford HP5 Plus (B&W)','Mamiya RZ67 (studio)','Nikon FM2 (street carry)','Fujifilm Neopan 100 Acros'] },
+              { cat:'Support', items:['Profoto B10 Plus (portable strobe)','Westcott Rapid Box octa','DJI Mavic 3 Pro (aerial)','Manfrotto 055 carbon tripod','Think Tank Airport roller','Capture One Pro 23'] },
+            ].map(g => (
+              <div key={g.cat} style={{ background:t.bgAlt, padding:'36px 40px', borderTop:`2px solid ${t.fg}` }}>
+                <div style={{ fontFamily:t.hf, fontSize:26, fontStyle:'italic', color:t.fg, marginBottom:20 }}>{g.cat}</div>
+                {g.items.map(item => (
+                  <div key={item} style={{ display:'flex', gap:10, alignItems:'baseline', marginBottom:10 }}>
+                    <span style={{ color:t.fgMuted, fontSize:10, flexShrink:0 }}>—</span>
+                    <span style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── SERVICES ──────────────────────────────────────────────────────────────────
+const ServicesPage = ({ t, setPage }) => {
+  const services = [
+    {
+      name:'Wedding & Events', price:'From $3,800', dur:'Full day · 8–10 hours',
+      note:'Most Central Coast weddings book the Collections package below.',
+      inc:['Ceremony + reception coverage','Second photographer available','Online proofing gallery via Pixieset','500+ fully edited high-resolution images','Print release + commercial-use license','Engagement session: add $400'],
+      venues:'Greengate Ranch · Holman Ranch · See Canyon Fruit Ranch · Castoro Cellars · Sunstone Winery · Hearst Ranch · Madonna Inn · Allegretto Vineyard Resort',
+    },
+    {
+      name:'Portrait & Headshot', price:'From $475', dur:'60–90 min session',
+      note:'Ideal for professionals, creatives, actors, and personal brand builders.',
+      inc:['Studio (SLO) or outdoor location of your choice','30+ fully edited selects delivered','High-resolution digital gallery','Personal-use print release included','Commercial license: add $200','Hair and makeup artist referrals available'],
+      venues:'Available throughout San Luis Obispo, Santa Barbara, and Monterey counties',
+    },
+    {
+      name:'Commercial & Brand', price:'Custom quote', dur:'Half day or full day',
+      note:'Regular clients include Central Coast wineries, restaurants, hospitality groups, and product brands.',
+      inc:['Pre-production creative consultation','Location scouting included','Art direction collaboration','Fully retouched selects + raw delivery','Licensing negotiated per project and use','Rush 48-hour turnaround available'],
+      venues:'Worked with: Tablas Creek · Edna Valley Winery · Firestone Walker · Avila Beach Resort · SLO Chamber of Commerce',
+    },
+    {
+      name:'Fine Art Prints', price:'From $195', dur:'Ships within 2–3 weeks',
+      note:'All prints are archival giclée on heavyweight cotton rag paper, signed and numbered.',
+      inc:['Edition sizes: 3, 10, or 25 prints','Sizes from 8x10 to 40x50 inches','Printed at West Coast archival lab','Certificate of authenticity included','Custom framing available (additional cost)','Collector inquiries welcome'],
+      venues:'Subject matter: Big Sur · Morro Rock · Carrizo Plain · Paso Robles vineyards · Channel Islands · Los Padres National Forest',
+    },
+  ];
+
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px' }}>
+        <SH label="Services & Pricing" title="What I offer." t={t} />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:2, marginBottom:60 }}>
+          {services.map((s,i) => (
+            <div key={i} style={{ background:t.bgAlt, padding:'48px', borderTop:`2px solid ${t.fg}`, display:'flex', flexDirection:'column' }}>
+              <div style={{ fontFamily:t.hf, fontSize:30, fontStyle:'italic', color:t.fg, marginBottom:4 }}>{s.name}</div>
+              <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, marginBottom:20 }}>{s.dur}</div>
+              <div style={{ fontFamily:t.hf, fontSize:38, color:t.fg, marginBottom:8 }}>{s.price}</div>
+              <div style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, marginBottom:24, fontStyle:'italic', lineHeight:1.5 }}>{s.note}</div>
+              <ul style={{ padding:0, margin:0, listStyle:'none', display:'flex', flexDirection:'column', gap:9, marginBottom:24 }}>
+                {s.inc.map((item,j) => (
+                  <li key={j} style={{ display:'flex', gap:12, alignItems:'baseline' }}>
+                    <span style={{ color:t.fgMuted, fontSize:10, flexShrink:0 }}>—</span>
+                    <span style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted, lineHeight:1.5 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, lineHeight:1.6, marginBottom:28, borderTop:`1px solid ${t.border}`, paddingTop:16 }}>{s.venues}</div>
+              <div style={{ marginTop:'auto' }}><Btn t={t} onClick={() => setPage('book')} outline>Inquire</Btn></div>
+            </div>
+          ))}
+        </div>
+
+        {/* FAQ strip */}
+        <div style={{ marginBottom:60 }}>
+          <SH label="Common Questions" title="Good to know." t={t} />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:40 }}>
+            {[
+              ["Do you travel outside of San Luis Obispo?", "Yes — frequently. I regularly work in Santa Barbara, Monterey, the Bay Area, and Los Angeles, and I am available for destination weddings worldwide. Travel fees apply outside a 60-mile radius of SLO."],
+              ["How far out should I book?", "Wedding dates book 9–18 months in advance, especially for popular venues and spring/fall weekends. Portrait and commercial sessions are typically available within 2–4 weeks."],
+              ["How long until I receive my images?", "Wedding galleries are delivered within 4–6 weeks. Portrait sessions within 1–2 weeks. Rush delivery (48 hours) is available for commercial clients at an additional fee."],
+              ["Do you shoot film?", "Yes. I offer film add-ons for weddings and portrait sessions. Fine art prints are almost exclusively shot on Hasselblad medium format. Ask about pricing and what film coverage looks like."],
+              ["What is your editing style?", "Clean, true-to-life, and timeless. I do not apply heavy presets or trend-driven color grading. The goal is that your gallery looks as good in 20 years as it does today."],
+              ["Do you provide raw files?", "No. Finished, fully edited images are the deliverable. This is how I ensure consistent quality across every frame in your gallery."],
+            ].map(([q,a]) => (
+              <div key={q} style={{ borderTop:`1px solid ${t.border}`, paddingTop:20 }}>
+                <div style={{ fontFamily:t.hf, fontSize:20, fontStyle:'italic', color:t.fg, marginBottom:10 }}>{q}</div>
+                <p style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted, lineHeight:1.75 }}>{a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background:t.bgAlt, padding:'44px 52px', borderLeft:`3px solid ${t.fg}`, maxWidth:700 }}>
+          <div style={{ fontFamily:t.hf, fontSize:26, fontStyle:'italic', color:t.fg, marginBottom:10 }}>Not sure what you need?</div>
+          <p style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted, lineHeight:1.8, margin:'0 0 22px' }}>Book a free 15-minute call. I will listen to what you are trying to create and give you an honest recommendation with no pressure.</p>
+          <Btn t={t} onClick={() => setPage('book')}>Schedule a Free Call · 15 min</Btn>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── CONTACT (Formspree-wired) ─────────────────────────────────────────────────
+// ➜  Replace REPLACE_WITH_YOUR_ID with your Formspree form ID
+//    Get it free at formspree.io → New Form → copy the 8-char ID
+const FORMSPREE_ID = 'xzdobryy';
+
+const ContactPage = ({ t }) => {
+  const [form, setForm] = React.useState({ name:'', email:'', phone:'', type:'', message:'' });
+  const [status, setStatus] = React.useState('idle'); // idle | sending | sent | error
+  const inp = { width:'100%', background:t.bgAlt, border:`1px solid ${t.border}`, padding:'13px 15px', fontFamily:t.bf, fontSize:13, color:t.fg, outline:'none', boxSizing:'border-box', appearance:'none' };
+  const lbl = { fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, display:'block', marginBottom:6 };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+        body: JSON.stringify({ ...form, _subject:`New inquiry from ${form.name} — Jarod M. Berg Photography` }),
+      });
+      setStatus(res.ok ? 'sent' : 'error');
+    } catch (err) {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px', display:'grid', gridTemplateColumns:'5fr 6fr', gap:100, maxWidth:1200, margin:'0 auto', alignItems:'start' }}>
+        {/* Left */}
+        <div>
+          <SH label="Get in Touch" title="Tell me about your project." t={t} />
+          <p style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.85, marginBottom:48 }}>Whether you have a clear vision or just a feeling you want to capture, I would love to hear from you. I reply to every inquiry personally, typically within one business day.</p>
+          {[
+            ['Email','hello@jarodberg.com'],
+            ['Phone','(805) 000-0000'],
+            ['Studio','San Luis Obispo, CA 93401'],
+            ['Service area','Central Coast, California + destination'],
+            ['Response time','Within 1 business day'],
+            ['2026 availability','Limited wedding dates — inquire early'],
+          ].map(([k,v]) => (
+            <div key={k} style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', padding:'14px 0', borderBottom:`1px solid ${t.border}`, gap:20 }}>
+              <span style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.14em', textTransform:'uppercase', color:t.fgMuted, flexShrink:0 }}>{k}</span>
+              <span style={{ fontFamily:t.bf, fontSize:13, color:t.fg, textAlign:'right' }}>{v}</span>
+            </div>
+          ))}
+          <div style={{ marginTop:40 }}>
+            <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, marginBottom:16 }}>Follow along</div>
+            <div style={{ display:'flex', gap:20 }}>
+              {['@jarodberg','Facebook','LinkedIn'].map(s => (
+                <a key={s} href="#" style={{ fontFamily:t.bf, fontSize:12, color:t.fg, textDecoration:'none', borderBottom:`1px solid ${t.border}`, paddingBottom:2 }}>{s}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right — form */}
+        <div style={{ marginTop:20 }}>
+          {status === 'sent' ? (
+            <div style={{ padding:'56px 48px', background:t.bgAlt, textAlign:'center' }}>
+              <div style={{ fontFamily:t.hf, fontSize:40, fontStyle:'italic', color:t.fg, marginBottom:14 }}>Message received.</div>
+              <p style={{ fontFamily:t.bf, fontSize:13, color:t.fgMuted, lineHeight:1.8, maxWidth:320, margin:'0 auto' }}>Thank you for reaching out. I will be back in touch within one business day — looking forward to hearing more about your project.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+                <div>
+                  <label style={lbl}>Your Name *</label>
+                  <input style={inp} value={form.name} onChange={e => setForm({...form, name:e.target.value})} required />
+                </div>
+                <div>
+                  <label style={lbl}>Email Address *</label>
+                  <input type="email" style={inp} value={form.email} onChange={e => setForm({...form, email:e.target.value})} required />
+                </div>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+                <div>
+                  <label style={lbl}>Phone (optional)</label>
+                  <input type="tel" style={inp} value={form.phone} onChange={e => setForm({...form, phone:e.target.value})} placeholder="(805) 000-0000" />
+                </div>
+                <div>
+                  <label style={lbl}>Type of Project *</label>
+                  <select style={{ ...inp, backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' fill='none' stroke-width='1.5'/%3E%3C/svg%3E")`, backgroundRepeat:'no-repeat', backgroundPosition:'right 14px center', paddingRight:36 }} value={form.type} onChange={e => setForm({...form, type:e.target.value})} required>
+                    <option value="">Select one…</option>
+                    <option>Wedding or Elopement</option>
+                    <option>Portrait or Headshot</option>
+                    <option>Commercial or Brand</option>
+                    <option>Fine Art Print inquiry</option>
+                    <option>Something else</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style={lbl}>Tell me about your project *</label>
+                <textarea style={{ ...inp, resize:'vertical', minHeight:180, lineHeight:1.7 }} value={form.message} onChange={e => setForm({...form, message:e.target.value})} required placeholder="Date, location, what you have in mind, any questions…" />
+              </div>
+              {status === 'error' && (
+                <div style={{ fontFamily:t.bf, fontSize:12, color:'oklch(55% 0.18 25)', padding:'10px 14px', background:'oklch(97% 0.03 25)', border:'1px solid oklch(85% 0.08 25)' }}>
+                  Something went wrong. Please email me directly at hello@jarodberg.com.
+                </div>
+              )}
+              <Btn t={t} type="submit" full>{status === 'sending' ? 'Sending…' : 'Send Message'}</Btn>
+              <p style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, textAlign:'center', lineHeight:1.6 }}>I reply to every message personally within one business day.</p>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── BOOK ──────────────────────────────────────────────────────────────────────
+const BookPage = ({ t }) => {
+  React.useEffect(() => {
+    if (document.querySelector('script[src*="calendly"]')) {
+      if (window.Calendly) window.Calendly.initInlineWidgets();
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://assets.calendly.com/assets/external/widget.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+  return (
+  <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+    <div style={{ padding:'80px 80px 100px', maxWidth:820, margin:'0 auto' }}>
+      <SH label="Book a Session" title="Schedule a free intro call." t={t} center />
+      <p style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.85, textAlign:'center', marginBottom:12, maxWidth:560, margin:'0 auto 48px' }}>
+        This is a relaxed 15-minute call to talk about your project, check availability, and make sure we are a good fit. No commitment, no sales pitch.
+      </p>
+      {/* Calendly embed */}
+      <div style={{ background:t.bgAlt, border:`1px solid ${t.border}`, minHeight:700, overflow:'hidden' }}>
+        <div className="calendly-inline-widget" data-url="https://calendly.com/jmasarykb/30min?hide_landing_page_details=1&hide_gdpr_banner=1&primary_color=111110" style={{ minWidth:320, height:700 }} />
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:2, marginTop:40 }}>
+        <div style={{ background:t.bgAlt, padding:'28px 32px', borderTop:`1px solid ${t.border}` }}>
+          <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, marginBottom:10 }}>Prefer to send a message?</div>
+          <p style={{ fontFamily:t.bf, fontSize:13, color:t.fg, lineHeight:1.7 }}>Use the <button onClick={() => {}} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', fontSize:'inherit', color:t.accent, padding:0 }}>contact form</button> and I will reply within one business day.</p>
+        </div>
+        <div style={{ background:t.bgAlt, padding:'28px 32px', borderTop:`1px solid ${t.border}` }}>
+          <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, marginBottom:10 }}>Email directly</div>
+          <p style={{ fontFamily:t.bf, fontSize:13, color:t.fg, lineHeight:1.7 }}>hello@jarodberg.com<br />(805) 000-0000</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  );
+};
+
+// ── BLOG ──────────────────────────────────────────────────────────────────────
+const POSTS = [
+  {
+    title:"Shooting a sunset wedding at Greengate Ranch",
+    date:"April 2, 2026", tag:"Wedding",
+    excerpt:"The late afternoon light at Greengate Ranch is some of the best I have ever worked with. Here is how I approach the golden hour at one of San Luis Obispo County's most-booked venues.",
+    body:["Greengate Ranch sits in the hills above San Luis Obispo, and in late spring and summer the sun sets directly over the Santa Lucia range behind it. When the sky cooperates you get about 22 minutes of light that turns everything — the oaks, the dry grass, the guests' faces — into something very close to gold.", "I arrive an hour early and walk the property alone. Every venue has a handful of frames that only work if you already know where to stand when the light moves. At Greengate that means the split-rail fence along the east pasture, the shadow line on the barn's west wall around 6:40 PM, and the gap in the oak canopy at the bottom of the ceremony hill that creates a natural backlight channel.", "The technical challenge at Greengate is contrast management. The sky can be two and a half stops brighter than your subjects' faces. I expose for the faces, add fill with a Profoto B10 at about -1.7 EV, and let the sky do what it wants. The result looks natural but would not hold up without the fill.", "Plan your portraits for the 35 minutes before sunset. Do not wait for it — by the time the sun actually touches the ridgeline you have lost the warm, manageable light and gained a flat pink horizon that looks fine in the moment and forgettable in the gallery."]
+  },
+  {
+    title:"The Central Coast light: what makes it different",
+    date:"March 11, 2026", tag:"Craft",
+    excerpt:"Photographers move to Los Angeles for the industry. They shoot in Big Sur for the drama. But the light between Paso Robles and Santa Barbara is something most people outside the region have never seen — and it changes everything.",
+    body:["The marine layer is the story. Most mornings from May through July a thick coastal fog sits over the lowlands until 10 or 11 AM, then burns off quickly. The hour immediately after the burn-off — roughly 10:30 to noon depending on the season — produces what I consider the rarest light I have found anywhere: bright enough to shoot without artificial fill, soft enough to wrap around faces without harsh shadows, and with a color temperature that reads slightly warm-neutral on camera.", "For portraits this is transformative. Midday light is usually the enemy of flattering portraiture, but on the Central Coast it behaves like an enormous softbox for a 90-minute window that you can almost set your watch by. I schedule portrait sessions to hit that window whenever possible.", "The afternoons are different. Once the marine layer is gone, the light hardens and turns very directional. By 3 PM you are dealing with high-contrast, high-saturation California sun. It is beautiful for landscape and architectural work but difficult for faces. I use this window for fine art landscape scouting and leave the portraits to morning or golden hour.", "The vineyards above Paso Robles sit at 1,800 to 2,200 feet elevation and are completely free of marine influence. Up there, the light is more like what you would find in the Sierra foothills — bright, hard-edged, and consistent. For commercial wine work I generally prefer late afternoon when the low angle adds texture to the vines and the shadows are long enough to give depth to the rows."]
+  },
+  {
+    title:"Gear I actually use: 2026 edition",
+    date:"February 5, 2026", tag:"Gear",
+    excerpt:"A no-nonsense look at what is in my bag for weddings, portraits, commercial shoots, and personal landscape work — and why each piece earned its spot.",
+    body:["I do not change gear often. The cameras and lenses I use now are the result of a decade of working out what actually matters on a job — and what just looks impressive in a flatlay.", "Primary camera: Sony A7R V. Sixty-one megapixels sounds like more than you need until you are delivering a 40x50-inch fine art print or the client crops a wide frame tight for an unexpected album use. The dynamic range at base ISO is exceptional and the autofocus tracking is accurate enough that I rarely miss a moving subject.", "The lens I reach for first on every wedding and portrait job is the Sony 85mm f/1.4 GM. Nothing I have used resolves a background the way this lens does at f/1.6 to f/2.0. It is heavy and it is slow to walk around with, but when a frame matters, this is what makes it.", "For film I shoot a Hasselblad 500CM with a 80mm f/2.8 Planar. It is slow, requires a tripod or very deliberate handheld technique, and costs roughly two dollars per frame when you factor in processing. It is also the only camera I own that has ever made me stop mid-session and just look at the light rather than shoot it."]
+  },
+  {
+    title:"How I approach the wedding day timeline",
+    date:"January 14, 2026", tag:"Wedding",
+    excerpt:"Most wedding timeline problems are photography problems in disguise. Here is how I work with couples to build a day that looks great in photos without feeling over-choreographed.",
+    body:["The single most important line item in a wedding timeline is buffer. Most planners and photographers will tell you to build in 20 minutes of buffer. I recommend 40. The difference between a couple who ends their portraits relaxed and laughing and one who ends them stressed and rushed is almost always 20 minutes of buffer that disappeared somewhere between the ceremony ending late and the venue coordinator needing the dance floor cleared.", "I send every couple a one-page timeline guide six months before the wedding. It covers: how much time portraits actually take (45 minutes minimum, 75 if you want a variety of locations), when to schedule the first look relative to ceremony, how venue lighting conditions should affect your ceremony time, and how to build a reception timeline that does not cannibalise the best natural light of the evening.", "First looks are worth it. I know some couples feel strongly about not seeing each other before the ceremony and I completely respect that. But if it is open for discussion, I make the case every time: a first look gives you 25 minutes of private, unhurried portrait time with your best light, calms nerves before the ceremony rather than after, and means your cocktail hour portraits are covered before you are hungry and tired.", "The golden hour slot — typically 30 to 40 minutes before sunset — is non-negotiable on the timeline I propose. I ask for 20 minutes alone with the couple during cocktail hour to chase the light. Almost every couple who has done this with me has told me those frames are their favorites in the gallery."]
+  },
+  {
+    title:"Client proofing with Pixieset: my full workflow",
+    date:"December 8, 2025", tag:"Business",
+    excerpt:"From memory card to delivered gallery: a transparent look at how I ingest, edit, and deliver images — and why Pixieset is the last tool standing after years of testing alternatives.",
+    body:["I used to use Shootproof. Before that, Smugmug. Before that, a self-hosted WordPress gallery that I would rather not discuss. I have been on Pixieset for three years and it is the first platform I have not felt the need to keep testing alternatives.", "The workflow starts in Capture One. I ingest directly from card to a mirrored RAID drive, apply a base correction layer that handles lens profiles and sensor corrections, then make a first cull to flag keepers. For a 10-hour wedding I am typically flagging 1,200 to 1,800 frames out of 3,000 to 4,000 captured.", "From there I apply global color grading — I have a handful of starting styles that I adapt per shoot depending on the light conditions and venue — then go frame by frame for local adjustments. Faces, highlight recovery, anything that needs individual attention. This is the slow part. A full wedding edit takes me about 14 hours across two or three days.", "I upload a private proofing gallery to Pixieset with password protection and share the link with the couple. They can favorite frames, leave comments, and download directly at full resolution. I include download stats in my project tracker — I find that couples who download within 48 hours of delivery are much more likely to leave reviews and refer friends than those who sit on the gallery for weeks."]
+  },
+  {
+    title:"Why I offer a free intro call",
+    date:"November 3, 2025", tag:"Business",
+    excerpt:"The 15-minute conversation that saves both of us time, sets the right expectations, and — at least half the time — produces a much better final result than we would have gotten without it.",
+    body:["I added the free intro call to my booking process in 2022, after a year of taking on every inquiry that came through the contact form. The results were inconsistent — not because the photography was inconsistent, but because the fit between what I naturally produce and what the client was actually picturing was not always there.", "The call is not a sales call. I am not trying to close anything. I am trying to figure out whether what you are hoping for is something I can genuinely deliver, and to give you an honest read of whether I am the right photographer for your project.", "About 20 percent of calls end with me referring the client to another photographer. That sounds like lost business and in the short term it is. But the referral network it has built — and the reviews from clients who were genuinely well-matched from the start — have more than compensated.", "The other thing the call accomplishes is expectation alignment. If a client is imagining documentary, available-light coverage and I show up with a strobe and a shot list, everyone has a bad day. Fifteen minutes of honest conversation prevents that. It is the best 15 minutes I spend on any client relationship."]
+  },
+];
+
+const BlogPage = ({ t, onPost }) => {
+  const dark = t.bg === '#0d0c0b';
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px' }}>
+        <SH label="Writing" title="Notes on craft, business, and the Central Coast." t={t} />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:40 }}>
+          {POSTS.map((p,i) => (
+            <div key={i} onClick={() => onPost(p)} style={{ cursor:'pointer', borderTop:`1px solid ${t.border}`, paddingTop:24 }}>
+              <Img label={`blog — ${p.tag.toLowerCase()}`} aspect="16/9" dark={dark} />
+              <div style={{ marginTop:18 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:10, gap:8 }}>
+                  <span style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.14em', textTransform:'uppercase', color:t.accent }}>{p.tag}</span>
+                  <span style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, flexShrink:0 }}>{p.date}</span>
+                </div>
+                <div style={{ fontFamily:t.hf, fontSize:22, fontStyle:'italic', color:t.fg, marginBottom:8, lineHeight:1.25 }}>{p.title}</div>
+                <div style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, lineHeight:1.7 }}>{p.excerpt}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BlogPostPage = ({ t, post, setPage }) => {
+  const dark = t.bg === '#0d0c0b';
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px', maxWidth:740, margin:'0 auto' }}>
+        <button onClick={() => setPage('blog')} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:t.bf, fontSize:11, letterSpacing:'0.16em', textTransform:'uppercase', color:t.fgMuted, padding:0, marginBottom:48 }}>← Back to Writing</button>
+        <div style={{ fontFamily:t.bf, fontSize:10, letterSpacing:'0.2em', textTransform:'uppercase', color:t.accent, marginBottom:14 }}>{post.tag}</div>
+        <h1 style={{ fontFamily:t.hf, fontSize:52, fontStyle:'italic', fontWeight:400, color:t.fg, margin:'0 0 18px', lineHeight:1.05 }}>{post.title}</h1>
+        <div style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, marginBottom:48 }}>{post.date} · Jarod M. Berg</div>
+        <Img label={`article image — ${post.tag.toLowerCase()}`} aspect="16/9" dark={dark} />
+        <div style={{ marginTop:48 }}>
+          <p style={{ fontFamily:t.bf, fontSize:16, color:t.fgMuted, lineHeight:1.9, marginBottom:28, fontStyle:'italic', borderLeft:`3px solid ${t.border}`, paddingLeft:20 }}>{post.excerpt}</p>
+          {post.body.map((para,i) => (
+            <p key={i} style={{ fontFamily:t.bf, fontSize:15, color:t.fgMuted, lineHeight:1.9, marginBottom:28 }}>{para}</p>
+          ))}
+        </div>
+        <div style={{ marginTop:60, paddingTop:48, borderTop:`1px solid ${t.border}`, display:'flex', flexDirection:'column', gap:12, alignItems:'flex-start' }}>
+          <div style={{ fontFamily:t.hf, fontSize:24, fontStyle:'italic', color:t.fg }}>Have a project in mind?</div>
+          <Btn t={t} onClick={() => setPage('contact')}>Get in Touch</Btn>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── CLIENT GALLERIES ──────────────────────────────────────────────────────────
+const GalleriesPage = ({ t }) => {
+  const [code, setCode] = React.useState('');
+  const [error, setError] = React.useState(false);
+  return (
+    <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+      <div style={{ padding:'80px 80px 100px', maxWidth:540, margin:'0 auto', textAlign:'center' }}>
+        <SH label="Client Access" title="Your gallery." t={t} center />
+        <p style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.85, marginBottom:12 }}>Enter the access code from your delivery email to view and download your photos.</p>
+        <p style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, lineHeight:1.7, marginBottom:44 }}>Galleries are hosted on <strong>Pixieset</strong> and include full-resolution downloads, a favorites tool, and a built-in print shop.</p>
+        <form onSubmit={e => { e.preventDefault(); if (!code.trim()) { setError(true); } else { setError(false); } }} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <input style={{ padding:'15px', fontFamily:t.bf, fontSize:13, background:t.bgAlt, border:`1px solid ${error ? 'oklch(55% 0.18 25)' : t.border}`, color:t.fg, textAlign:'center', letterSpacing:'0.2em', outline:'none' }} placeholder="ENTER ACCESS CODE" value={code} onChange={e => { setCode(e.target.value); setError(false); }} />
+          {error && <div style={{ fontFamily:t.bf, fontSize:12, color:'oklch(55% 0.18 25)' }}>Please enter your access code to continue.</div>}
+          <Btn t={t} type="submit" full>Access My Gallery</Btn>
+        </form>
+        <p style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, lineHeight:1.7, marginTop:36 }}>Gallery not loading or no access code? Email <a href="mailto:hello@jarodberg.com" style={{ color:t.fg, textDecoration:'underline', textUnderlineOffset:3 }}>hello@jarodberg.com</a> and I will resend your delivery link.</p>
+        <div style={{ marginTop:40, padding:'20px 28px', background:t.bgAlt, border:`1px solid ${t.border}` }}>
+          <div style={{ fontFamily:t.bf, fontSize:11, color:t.fgMuted, lineHeight:1.7 }}>Galleries are available for <strong>12 months</strong> from delivery. If your gallery has expired and you need access to your images, reach out — I archive all client work for 3 years.</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── PRIVACY ───────────────────────────────────────────────────────────────────
+const PrivacyPage = ({ t }) => (
+  <div style={{ paddingTop:64, background:t.bg, minHeight:'100vh' }}>
+    <div style={{ padding:'80px 80px 100px', maxWidth:720, margin:'0 auto' }}>
+      <SH label="Legal" title="Privacy Policy" t={t} />
+      <p style={{ fontFamily:t.bf, fontSize:12, color:t.fgMuted, marginBottom:32, lineHeight:1.7 }}>Last updated: April 2026</p>
+      {[
+        ["Information I collect", "When you submit the contact form, I collect your name, email address, phone number (optional), and the content of your message. This information is processed by Formspree and delivered to me by email. I do not store form submissions on this site."],
+        ["How I use your information", "Solely to respond to your inquiry. I do not sell, rent, or share your information with third parties for marketing purposes. I may keep your contact details to follow up on an ongoing project."],
+        ["Photography and likeness", "Images captured at contracted sessions are used in accordance with our signed agreement. By default, I may use photographs in my portfolio, website, and social media unless you request otherwise in writing before or at the time of booking."],
+        ["Cookies and analytics", "This website does not use tracking cookies. If analytics are added in future (e.g. Plausible Analytics), this policy will be updated."],
+        ["Contact", "For any privacy-related questions, email hello@jarodberg.com."],
+      ].map(([heading, body]) => (
+        <div key={heading} style={{ marginBottom:36, borderTop:`1px solid ${t.border}`, paddingTop:24 }}>
+          <div style={{ fontFamily:t.hf, fontSize:22, fontStyle:'italic', color:t.fg, marginBottom:12 }}>{heading}</div>
+          <p style={{ fontFamily:t.bf, fontSize:14, color:t.fgMuted, lineHeight:1.85 }}>{body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ══════════════════════════ TWEAKS PANEL ══════════════════════════════════════
+const TweaksPanel = ({ tweaks, setTweak, navigateTo }) => {
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const h = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setVisible(true);
+      if (e.data?.type === '__deactivate_edit_mode') setVisible(false);
+    };
+    window.addEventListener('message', h);
+    window.parent.postMessage({ type:'__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', h);
+  }, []);
+  const onClose = () => { setVisible(false); window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*'); };
+  const persist = (key, val) => { setTweak(key, val); window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ [key]:val } }, '*'); };
+  if (!visible) return null;
+  const t = THEMES[tweaks.theme] || THEMES['Bright Minimal'];
+  const rBtn = (val, cur, fn) => (
+    <button onClick={() => fn(val)} style={{ padding:'6px 12px', fontSize:10, letterSpacing:'0.12em', textTransform:'uppercase', background:cur===val?t.fg:'none', color:cur===val?t.bg:t.fgMuted, border:`1px solid ${cur===val?t.fg:t.border}`, cursor:'pointer', transition:'all 0.15s' }}>{val}</button>
+  );
+  return (
+    <div style={{ position:'fixed', bottom:24, right:24, zIndex:9999, background:tweaks.theme==='Dark Cinematic'?'#1c1b1a':'#fff', border:`1px solid ${t.border}`, boxShadow:'0 8px 40px rgba(0,0,0,0.18)', padding:24, width:250, fontFamily:t.bf, color:t.fg }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+        <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase' }}>Tweaks</span>
+        <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color:t.fgMuted, fontSize:18, lineHeight:1, padding:0 }}>×</button>
+      </div>
+      <div style={{ fontSize:10, letterSpacing:'0.18em', textTransform:'uppercase', color:t.fgMuted, marginBottom:10 }}>Style</div>
+      <div style={{ display:'flex', gap:4, flexWrap:'wrap', marginBottom:20 }}>
+        {Object.keys(THEMES).map(n => rBtn(n, tweaks.theme, v => persist('theme', v)))}
+      </div>
+      <div style={{ fontSize:10, letterSpacing:'0.18em', textTransform:'uppercase', color:t.fgMuted, marginBottom:10 }}>Wordmark</div>
+      <div style={{ display:'flex', gap:4, flexWrap:'wrap', marginBottom:20 }}>
+        {['stacked','serif','mono'].map(v => rBtn(v, tweaks.wordmark, val => persist('wordmark', val)))}
+      </div>
+      <div style={{ fontSize:10, letterSpacing:'0.18em', textTransform:'uppercase', color:t.fgMuted, marginBottom:10 }}>Navigate to</div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4 }}>
+        {[['home','Home'],['portfolio','Portfolio'],['about','About'],['services','Services'],['blog','Blog'],['contact','Contact'],['book','Book'],['client-galleries','Galleries']].map(([slug,label]) => (
+          <button key={slug} onClick={() => navigateTo(slug)} style={{ background:'none', border:`1px solid ${t.border}`, cursor:'pointer', fontFamily:t.bf, fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', padding:'7px 4px', color:t.fgMuted, textAlign:'center' }}>{label}</button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════ APP ═══════════════════════════════════════════════
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "Bright Minimal",
+  "wordmark": "serif"
+}/*EDITMODE-END*/;
+
+const App = () => {
+  const [tweaks, setTweaksState] = React.useState(() => {
+    try { return { ...TWEAK_DEFAULTS, ...JSON.parse(localStorage.getItem('jb-tweaks') || '{}') }; }
+    catch { return { ...TWEAK_DEFAULTS }; }
+  });
+  const setTweak = (key, val) => setTweaksState(prev => {
+    const next = { ...prev, [key]:val };
+    localStorage.setItem('jb-tweaks', JSON.stringify(next));
+    return next;
+  });
+
+  const [page, setPage] = React.useState('home');
+  const [activeBlog, setActiveBlog] = React.useState(null);
+  const theme = tweaks.theme || 'Bright Minimal';
+  const t = THEMES[theme];
+
+  React.useEffect(() => {
+    document.body.style.background = t.bg;
+    window.scrollTo({ top:0 });
+  }, [page, theme]);
+
+  const navigateTo = (p) => { setActiveBlog(null); setPage(p); };
+
+  const renderPage = () => {
+    switch (page) {
+      case 'home':             return <HomePage t={t} setPage={navigateTo} />;
+      case 'portfolio':        return <PortfolioPage t={t} />;
+      case 'about':            return <AboutPage t={t} setPage={navigateTo} />;
+      case 'services':         return <ServicesPage t={t} setPage={navigateTo} />;
+      case 'contact':          return <ContactPage t={t} />;
+      case 'book':             return <BookPage t={t} />;
+      case 'blog':             return <BlogPage t={t} onPost={p => { setActiveBlog(p); setPage('blog-post'); }} />;
+      case 'blog-post':        return activeBlog ? <BlogPostPage t={t} post={activeBlog} setPage={navigateTo} /> : <BlogPage t={t} onPost={p => { setActiveBlog(p); setPage('blog-post'); }} />;
+      case 'client-galleries': return <GalleriesPage t={t} />;
+      case 'privacy':          return <PrivacyPage t={t} />;
+      default:                 return <HomePage t={t} setPage={navigateTo} />;
+    }
+  };
+
+  return (
+    <div style={{ minHeight:'100vh', background:t.bg, display:'flex', flexDirection:'column' }}>
+      <Nav t={t} page={page} setPage={navigateTo} wmark={tweaks.wordmark} />
+      <main style={{ flex:1 }}>{renderPage()}</main>
+      <Footer t={t} setPage={navigateTo} wmark={tweaks.wordmark} />
+      <TweaksPanel tweaks={tweaks} setTweak={setTweak} navigateTo={navigateTo} />
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
